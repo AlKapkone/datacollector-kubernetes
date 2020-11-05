@@ -34,19 +34,18 @@ spec:
     metadata:
       labels:
         app: datacollector
-      annotations:
-        pod.beta.kubernetes.io/init-containers: '[
-          {
-            "name": "init-datacollector-data",
-            "image": "busybox",
-            "command": ["sh", "-c", "chown -R 20159 /data /opt/streamsets-datacollector/streamsets-libs"],
-            "volumeMounts": [
-              {"name": "data", "mountPath": "/data", "subPath": "data"},
-              {"name": "data", "mountPath": "/opt/streamsets-datacollector/streamsets-libs", "subPath": "stagelibs"}
-            ]
-          }
-        ]'
     spec:
+      initContainers:
+        - name: init-datacollector-data
+          image: busybox
+          command: [ '/bin/sh', '-c', 'chown -R 20159 /data /opt/streamsets-datacollector/streamsets-libs' ]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+              subPath: data
+            - name: data
+              mountPath: /opt/streamsets-datacollector/streamsets-libs
+              subPath: stagelibs
       terminationGracePeriodSeconds: 10
       containers:
       - name: datacollector
